@@ -3,11 +3,11 @@ package service
 import (
 	"errors"
 	"fmt"
-	"github.com/jiangh156/Go_lib/common"
-	"github.com/jiangh156/Go_lib/model"
-	"github.com/jiangh156/Go_lib/repository"
-	"github.com/jiangh156/Go_lib/vo"
 	"gorm.io/gorm"
+	"library_server/common"
+	"library_server/model"
+	"library_server/repository"
+	"library_server/vo"
 	"net/http"
 )
 

@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"github.com/jiangh156/Go_lib/common"
-	"github.com/jiangh156/Go_lib/model"
 	"gorm.io/gorm"
+	"library_server/common"
+	"library_server/model"
 )
 
 type BookRepository struct {

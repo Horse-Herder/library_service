@@ -3,13 +3,13 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jiangh156/Go_lib/common"
-	"github.com/jiangh156/Go_lib/model"
-	"github.com/jiangh156/Go_lib/response"
-	"github.com/jiangh156/Go_lib/service"
-	"github.com/jiangh156/Go_lib/utils"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"library_server/common"
+	"library_server/model"
+	"library_server/response"
+	"library_server/service"
+	"library_server/utils"
 	"net/http"
 )
 

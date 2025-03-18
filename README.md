@@ -18,7 +18,7 @@ mysql 8.0.32
 ```markdown
 拉取代码 main分支
 
-git clone -b main https://github.com/JiangH156/go_lib.git
+git clone -b main https://library_server.git
 
 更新依赖
 
@@ -33,7 +33,7 @@ yarn serve
 ```markdown
 拉取代码
 
-git clone -b master https://github.com/JiangH156/go_lib.git
+git clone -b master https://library_server.git
 
 更新依赖
 

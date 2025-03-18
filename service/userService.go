@@ -2,12 +2,12 @@ package service
 
 import (
 	"errors"
-	"github.com/jiangh156/Go_lib/common"
-	"github.com/jiangh156/Go_lib/model"
-	"github.com/jiangh156/Go_lib/repository"
-	"github.com/jiangh156/Go_lib/utils"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"library_server/common"
+	"library_server/model"
+	"library_server/repository"
+	"library_server/utils"
 	"net/http"
 )
 

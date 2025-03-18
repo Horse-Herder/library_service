@@ -3,9 +3,9 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jiangh156/Go_lib/model"
-	"github.com/jiangh156/Go_lib/response"
-	"github.com/jiangh156/Go_lib/service"
+	"library_server/model"
+	"library_server/response"
+	"library_server/service"
 	"net/http"
 	"strconv"
 )

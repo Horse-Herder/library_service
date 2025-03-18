@@ -2,10 +2,10 @@ package service
 
 import (
 	"errors"
-	"github.com/jiangh156/Go_lib/common"
-	"github.com/jiangh156/Go_lib/model"
-	"github.com/jiangh156/Go_lib/repository"
 	"gorm.io/gorm"
+	"library_server/common"
+	"library_server/model"
+	"library_server/repository"
 	"net/http"
 	"strconv"
 )

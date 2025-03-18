@@ -3,8 +3,8 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jiangh156/Go_lib/response"
-	"github.com/jiangh156/Go_lib/service"
+	"library_server/response"
+	"library_server/service"
 )
 
 type CommentController struct {

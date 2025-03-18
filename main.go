@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/jiangh156/Go_lib/common"
-	"github.com/jiangh156/Go_lib/router"
-	"github.com/spf13/viper"
 	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+
+	"library_server/common"
+	"library_server/router"
 )
 
 func main() {
@@ -41,7 +43,7 @@ func InitConfig() {
 	// 配置文件所在目录
 	viper.AddConfigPath(dir + "/config")
 	// 配置文件名（不带后缀）
-	viper.SetConfigName("application")
+	viper.SetConfigName("application_dev")
 	// 配置文件类型
 	viper.SetConfigType("yml")
 	// 读取配置信息

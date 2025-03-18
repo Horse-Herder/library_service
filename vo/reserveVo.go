@@ -1,6 +1,6 @@
 package vo
 
-import "github.com/jiangh156/Go_lib/model"
+import "library_server/model"
 
 type ReserveVo struct {
 	ReaderId   string     `json:"readerId"`
