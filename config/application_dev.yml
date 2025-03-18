@@ -1,0 +1,22 @@
+# server
+server:
+  port: 8080
+
+# mysql
+datasource:
+  username: xxxxx
+  password:  xxxxx
+  host: 127.0.0.1
+  port: 3306
+  database: xxxxx
+  charset: utf8mb4
+  parseTime: true
+  loc: Asia/Shanghai
+
+# email
+email:
+  alias: xxxxx
+  host: smtp.163.com # 网易邮箱
+  port: 465
+  username: xxxxx@163.com
+  password: xxxxx
