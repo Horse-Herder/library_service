@@ -2,12 +2,14 @@ package service
 
 import (
 	"errors"
+	"net/http"
+
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 	"library_server/repository"
 	"library_server/vo"
-	"net/http"
 )
 
 type ReaderService struct {
@@ -22,7 +24,7 @@ func (c *ReaderService) GetReader(readerId string) (reader *model.Reader, lErr *
 	readerRepository := repository.NewReaderRepository()
 	if len(readerId) == 0 {
 		return reader, &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "获取读者信息失败",
 			Err:      errors.New("获取读者信息失败"),
 		}
@@ -32,7 +34,7 @@ func (c *ReaderService) GetReader(readerId string) (reader *model.Reader, lErr *
 	// 查询错误
 	if err != nil {
 		return reader, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "获取读者信息失败",
 			Err:      errors.New("获取读者信息失败"),
 		}
@@ -50,7 +52,7 @@ func (c *ReaderService) MaxCountReader() (reader []vo.MaxCountReader, lErr *comm
 	//  查询评论数量
 	if err != nil {
 		return reader, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("查询评论数量失败"),
 		}
@@ -70,7 +72,7 @@ func (c *ReaderService) GetReaders() (readers []model.Reader, lErr *common.LErro
 
 	if err != nil {
 		return readers, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("获取所有人员信息失败"),
 		}
@@ -89,7 +91,7 @@ func (c *ReaderService) DeleteReader(readerId string) (lErr *common.LError) {
 	borrows, err := borrowRepository.GetUnreturnedBorrowsByReaderId(readerId)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("获取未归还的书籍失败"),
 		}
@@ -98,7 +100,7 @@ func (c *ReaderService) DeleteReader(readerId string) (lErr *common.LError) {
 	//fmt.Println("borrow", borrows)
 	if len(borrows) != 0 {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("用户存在未归还书籍"),
 		}
@@ -110,12 +112,12 @@ func (c *ReaderService) DeleteReader(readerId string) (lErr *common.LError) {
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("删除用户失败"),
 		}
 	}
-	//tx.Commit()
+	tx.Commit()
 	return nil
 }
 

@@ -28,9 +28,10 @@ func (c *CommentController) GetComments(ctx *gin.Context) {
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "评论区请求成功",
-		"data":   comments,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "评论区请求成功",
+		"data":       comments,
 	})
 }
 
@@ -45,16 +46,18 @@ func (c *CommentController) GetCommentCount(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
-		"data":   mytotal,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
+		"data":       mytotal,
 	})
 }
 
@@ -72,15 +75,17 @@ func (c *CommentController) CreateComment(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
 	})
 }
 
@@ -98,15 +103,17 @@ func (c *CommentController) UpdatePraise(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
 	})
 }
 

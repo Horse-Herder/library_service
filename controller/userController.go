@@ -2,15 +2,17 @@ package controller
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 	"library_server/response"
 	"library_server/service"
 	"library_server/utils"
-	"net/http"
 )
 
 type UserController struct {
@@ -39,15 +41,17 @@ func (u *UserController) Register(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "注册成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "注册成功",
 	})
 }
 
@@ -86,17 +90,19 @@ func (u *UserController) loginAsAdmin(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"msg":      "管理员登录成功",
-		"status":   200,
-		"userName": phone,
-		"isAdmin":  true,
+		"msg":        "管理员登录成功",
+		"status":     200,
+		"error_code": 1,
+		"userName":   phone,
+		"isAdmin":    true,
 	})
 }
 
@@ -146,6 +152,7 @@ func (u *UserController) loginAsReader(ctx *gin.Context) {
 		"ovdTimes":    loginReader.OvdTimes,
 		"email":       loginReader.Email,
 		"isAdmin":     false,
+		"error_code":  1,
 	})
 
 }

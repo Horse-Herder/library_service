@@ -3,14 +3,16 @@ package service
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"time"
+
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 	"library_server/repository"
 	"library_server/utils"
 	"library_server/vo"
-	"net/http"
-	"time"
 )
 
 type BorrowService struct {
@@ -31,7 +33,7 @@ func (b *BorrowService) CreateBorrowRecord(readerId, bookId string, date model.T
 	if err := readerRepository.UpdateReaderBorrowTimes(tx, readerId, 1); err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "添加借阅记录失败",
 			Err:      errors.New("reader借阅次数更新失败"),
 		}
@@ -41,7 +43,7 @@ func (b *BorrowService) CreateBorrowRecord(readerId, bookId string, date model.T
 	if err := bookRepository.UpdateBookAmount(tx, bookId, -1); err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "添加借阅记录失败",
 			Err:      errors.New("book书籍总数更新失败"),
 		}
@@ -50,7 +52,7 @@ func (b *BorrowService) CreateBorrowRecord(readerId, bookId string, date model.T
 	if err := bookRepository.UpdateBookBorrowedTimes(tx, bookId, 1); err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "添加借阅记录失败",
 			Err:      errors.New("book书籍借阅次数更新失败"),
 		}
@@ -65,7 +67,7 @@ func (b *BorrowService) CreateBorrowRecord(readerId, bookId string, date model.T
 	if err := reserveRepository.UpdateStatus(tx, updReserve, "已借阅"); err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "添加借阅记录失败",
 			Err:      errors.New("reserve预约记录更新失败"),
 		}
@@ -84,7 +86,7 @@ func (b *BorrowService) CreateBorrowRecord(readerId, bookId string, date model.T
 	if err := borrowRepository.CreateBorrowRecord(tx, addBorrow); err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "添加借阅记录失败",
 			Err:      errors.New("borrow新增记录失败"),
 		}
@@ -104,7 +106,7 @@ func (b *BorrowService) GetReaderBorrowRecords(readerId string) (borrowVos []vo.
 	//fmt.Println(readerId)
 	if readerId == "" {
 		return borrowVos, &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "查询借阅记录错误",
 			Err:      errors.New("readerId为空"),
 		}
@@ -115,7 +117,7 @@ func (b *BorrowService) GetReaderBorrowRecords(readerId string) (borrowVos []vo.
 
 	if err != nil {
 		return borrowVos, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "查询借阅记录错误",
 			Err:      errors.New("查询借阅记录错误"),
 		}
@@ -137,7 +139,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 
 	if bookId == "" || readerId == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("bookId或readerId为空"),
 		}
@@ -148,7 +150,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 	//fmt.Println(id)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("获取id失败"),
 		}
@@ -158,7 +160,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 	status, err := borrowRepository.GetBorrowStatus(id)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("查询书籍状态失败"),
 		}
@@ -166,7 +168,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 
 	if status == "已还" {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("书籍已经归还"),
 		}
@@ -178,7 +180,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("book 更新当前数量失败"),
 		}
@@ -191,7 +193,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("获取借阅截止时间失败"),
 		}
@@ -207,7 +209,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
+				HttpCode: http.StatusOK,
 				Msg:      "归还书籍失败",
 				Err:      errors.New("更新reader逾期记录失败"),
 			}
@@ -219,7 +221,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("borrow 更新实际归还日期失败"),
 		}
@@ -231,7 +233,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "归还书籍失败",
 			Err:      errors.New("borrow 更新状态失败"),
 		}
@@ -250,7 +252,7 @@ func (b *BorrowService) ReturnBook(readerId string, bookId string, borrowDate mo
 func (b *BorrowService) RenewBook(readerId string, bookId string, borrowDate string) (lErr *common.LError) {
 	if readerId == "" || bookId == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "数据格式有误",
 			Err:      errors.New("数据格式有误"),
 		}
@@ -262,7 +264,7 @@ func (b *BorrowService) RenewBook(readerId string, bookId string, borrowDate str
 	id, err := borrowRepository.GetBorrowId(readerId, bookId, date)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "续借图书失败",
 			Err:      errors.New("获取id失败"),
 		}
@@ -276,7 +278,7 @@ func (b *BorrowService) RenewBook(readerId string, bookId string, borrowDate str
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "续借图书失败",
 			Err:      errors.New("更新状态失败"),
 		}
@@ -285,7 +287,7 @@ func (b *BorrowService) RenewBook(readerId string, bookId string, borrowDate str
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "续借图书失败",
 			Err:      errors.New("更新状态失败"),
 		}
@@ -297,7 +299,7 @@ func (b *BorrowService) RenewBook(readerId string, bookId string, borrowDate str
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "续借图书失败",
 			Err:      errors.New("更新借阅时间失败"),
 		}
@@ -311,7 +313,7 @@ func (b *BorrowService) RenewBook(readerId string, bookId string, borrowDate str
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "续借图书失败",
 			Err:      errors.New("更新借阅时间失败"),
 		}
@@ -331,7 +333,7 @@ func (b *BorrowService) GetAllBorrowRecords() (borrowVos []vo.BorrowVo, lErr *co
 
 	if err != nil {
 		return borrowVos, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("获取全部借阅记录错误"),
 		}
@@ -351,7 +353,7 @@ func (b *BorrowService) GetBorrowRecordByInfo(info string) (borrowVos []vo.Borro
 
 	if err != nil {
 		return borrowVos, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("获取全部借阅记录错误"),
 		}
@@ -371,7 +373,7 @@ func (b *BorrowService) DeleteBorrow(readerId, bookId, borrowDate string) (lErr 
 	// 数据验证
 	if readerId == "" || bookId == "" || borrowDate == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("删除借阅记录错误"),
 		}
@@ -391,7 +393,7 @@ func (b *BorrowService) DeleteBorrow(readerId, bookId, borrowDate string) (lErr 
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("删除借阅记录错误"),
 		}
@@ -410,7 +412,7 @@ func (b *BorrowService) SendReminder(readerId string, bookName string) (lErr *co
 	// 数据验证
 	if readerId == "" || bookName == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "数据验证失败",
 			Err:      errors.New("数据验证失败"),
 		}
@@ -421,7 +423,7 @@ func (b *BorrowService) SendReminder(readerId string, bookName string) (lErr *co
 	borrows, err := borrowRepository.GetUnreturnedBorrowsByReaderId(readerId)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("查询用户未归还书籍错误"),
 		}
@@ -430,7 +432,7 @@ func (b *BorrowService) SendReminder(readerId string, bookName string) (lErr *co
 	//  用户是否归还书籍
 	if len(borrows) == 0 {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "用户已归还书籍",
 			Err:      errors.New("用户已归还书籍"),
 		}
@@ -448,7 +450,7 @@ func (b *BorrowService) SendReminder(readerId string, bookName string) (lErr *co
 	//  书籍已归还
 	if !flag {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "用户已归还书籍",
 			Err:      errors.New("用户已归还书籍"),
 		}
@@ -459,7 +461,7 @@ func (b *BorrowService) SendReminder(readerId string, bookName string) (lErr *co
 	reader, err := readerRepository.GetReaderByReaderId(readerId)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("获取邮箱失败"),
 		}
@@ -470,7 +472,7 @@ func (b *BorrowService) SendReminder(readerId string, bookName string) (lErr *co
 	err = utils.SendEmail([]string{reader.Email}, nil, nil, subject, body, "")
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("发送邮件失败"),
 		}

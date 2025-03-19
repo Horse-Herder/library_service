@@ -27,7 +27,7 @@ func (c *CommentService) GetComments() (comments []vo.CommentVo, lErr *common.LE
 	// 获取评论CommentVo
 	if err != nil {
 		return comments, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "查询所有评论失败",
 			Err:      errors.New("获取评论CommentVo失败"),
 		}
@@ -47,7 +47,7 @@ func (c *CommentService) GetCommentAmount() (count int64, lErr *common.LError) {
 	//  查询评论数量
 	if err != nil {
 		return count, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "查询评论数量错误",
 			Err:      errors.New("查询评论数量失败"),
 		}
@@ -66,7 +66,7 @@ func (c *CommentService) CreateComment(readerId string, bookId string, content s
 	// 数据验证
 	if readerId == "" || bookId == "" || content == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "添加评论失败",
 			Err:      errors.New("数据验证失败"),
 		}
@@ -88,7 +88,7 @@ func (c *CommentService) CreateComment(readerId string, bookId string, content s
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "添加评论失败",
 			Err:      errors.New("添加评论失败"),
 		}
@@ -108,7 +108,7 @@ func (c *CommentService) UpdatePraise(readerId string, bookId string, date strin
 	// 数据验证
 	if readerId == "" || bookId == "" || date == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "更新点赞记录失败",
 			Err:      errors.New("数据验证失败"),
 		}
@@ -121,7 +121,7 @@ func (c *CommentService) UpdatePraise(readerId string, bookId string, date strin
 	commentId, err := commentRepository.GetCommentId(readerId, bookId, time)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "更新点赞记录失败",
 			Err:      errors.New("获取commentId失败"),
 		}
@@ -134,7 +134,7 @@ func (c *CommentService) UpdatePraise(readerId string, bookId string, date strin
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "添加评论失败",
 			Err:      errors.New("添加评论失败"),
 		}

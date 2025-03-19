@@ -2,13 +2,15 @@ package service
 
 import (
 	"errors"
+	"net/http"
+
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 	"library_server/repository"
 	"library_server/utils"
 	"library_server/vo"
-	"net/http"
 )
 
 type ReportService struct {
@@ -25,7 +27,7 @@ func (r *ReportService) GetReportRecords(readerId string) (reports []vo.ReportVo
 	// 数据验证
 	if readerId == "" {
 		return reports, &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "获取举报记录失败",
 			Err:      errors.New("数据验证失败"),
 		}
@@ -36,7 +38,7 @@ func (r *ReportService) GetReportRecords(readerId string) (reports []vo.ReportVo
 
 	if err != nil {
 		return reports, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "获取举报记录失败",
 			Err:      errors.New("获取举报记录失败"),
 		}
@@ -56,7 +58,7 @@ func (r *ReportService) GetAllReportRecords() (reportVos []vo.ReportVo, lErr *co
 
 	if err != nil {
 		return reportVos, &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "获取举报记录失败",
 			Err:      errors.New("获取举报记录失败"),
 		}
@@ -74,7 +76,7 @@ func (r *ReportService) CreateReport(commentId string, reporterId string) (lErr 
 	// 数据验证
 	if commentId == "" || reporterId == "" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "数据验证失败",
 			Err:      errors.New("数据验证失败"),
 		}
@@ -85,7 +87,7 @@ func (r *ReportService) CreateReport(commentId string, reporterId string) (lErr 
 	readerId, err := commentRepository.GetReaderIdByCommentId(commentId)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("查询ReaderId失败"),
 		}
@@ -93,7 +95,7 @@ func (r *ReportService) CreateReport(commentId string, reporterId string) (lErr 
 	//  不允许举报自己
 	if readerId == reporterId {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "不允许举报自己",
 			Err:      errors.New("不允许举报自己"),
 		}
@@ -102,7 +104,7 @@ func (r *ReportService) CreateReport(commentId string, reporterId string) (lErr 
 	// 不允许举报管理员
 	if readerId == "admin" {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "不允许举报管理员",
 			Err:      errors.New("不允许举报管理员"),
 		}
@@ -122,7 +124,7 @@ func (r *ReportService) CreateReport(commentId string, reporterId string) (lErr 
 	if err != nil {
 		tx.Rollback()
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "请求失败",
 			Err:      errors.New("数据库插入数据错误"),
 		}
@@ -151,7 +153,7 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if utils.IsAnyParameterEmpty(reportInfo.CommentID, reportInfo.ReporterID,
 			reportInfo.ReportDate, reportInfo.ReaderID, reportInfo.BookID, reportInfo.Date) {
 			return &common.LError{
-				HttpCode: http.StatusBadRequest,
+				HttpCode: http.StatusOK,
 				Msg:      "请求参数有误",
 				Err:      errors.New("请求参数有误"),
 			}
@@ -161,8 +163,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		commentId, err := commentRepository.GetCommentId(reportInfo.ReaderID, reportInfo.BookID, reportInfo.Date)
 		if err != nil {
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败101",
 				Err:      errors.New("获取CommentId错误"),
 			}
 		}
@@ -171,8 +173,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败999",
 				Err:      errors.New("更新Comment错误"),
 			}
 		}
@@ -187,8 +189,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败888",
 				Err:      errors.New("更新Report错误"),
 			}
 		}
@@ -197,8 +199,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			//tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败777",
 				Err:      errors.New("获取邮箱错误"),
 			}
 		}
@@ -208,8 +210,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败666",
 				Err:      err,
 			}
 		}
@@ -219,8 +221,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败555",
 				Err:      errors.New("获取邮箱错误"),
 			}
 		}
@@ -230,8 +232,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败444",
 				Err:      err,
 			}
 		}
@@ -242,7 +244,7 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		// 数据验证
 		if utils.IsAnyParameterEmpty(reportInfo.CommentID, reportInfo.ReporterID) {
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
+				HttpCode: http.StatusOK,
 				Msg:      "请求参数有误",
 				Err:      errors.New("请求参数有误"),
 			}
@@ -258,8 +260,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败333",
 				Err:      errors.New("驳回该举报错误"),
 			}
 		}
@@ -268,8 +270,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil || email == "" {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败222",
 				Err:      errors.New("获取邮箱错误"),
 			}
 		}
@@ -280,8 +282,8 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
-				Msg:      "请求失败",
+				HttpCode: http.StatusOK,
+				Msg:      "请求失败-发送邮件失败",
 				Err:      err,
 			}
 		}
@@ -292,7 +294,7 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		// 数据验证
 		if utils.IsAnyParameterEmpty(reportInfo.ReaderID, reportInfo.BookID, reportInfo.Date) {
 			return &common.LError{
-				HttpCode: http.StatusBadRequest,
+				HttpCode: http.StatusOK,
 				Msg:      "请求参数有误",
 				Err:      errors.New("请求参数有误"),
 			}
@@ -301,7 +303,7 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		commentId, err := commentRepository.GetCommentId(reportInfo.ReaderID, reportInfo.BookID, reportInfo.Date)
 		if err != nil {
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
+				HttpCode: http.StatusOK,
 				Msg:      "请求错误",
 				Err:      errors.New("commentId错误"),
 			}
@@ -311,7 +313,7 @@ func (c *ReportService) ManageReport(reportInfo vo.ReportVo) (lErr *common.LErro
 		if err != nil {
 			tx.Rollback()
 			return &common.LError{
-				HttpCode: http.StatusInternalServerError,
+				HttpCode: http.StatusOK,
 				Msg:      "请求错误",
 				Err:      errors.New("更新Status错误"),
 			}

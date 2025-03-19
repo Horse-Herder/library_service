@@ -2,7 +2,9 @@ package controller
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
+
 	"library_server/response"
 	"library_server/service"
 )
@@ -24,8 +26,9 @@ func (c *ReaderController) GetReaderInfo(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
@@ -54,15 +57,17 @@ func (c *ReaderController) GetMaxCountReader(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
-		"data":   reader,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
+		"data":       reader,
 	})
 
 }
@@ -78,15 +83,17 @@ func (c *ReaderController) GetReaders(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
-		"data":   readers,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
+		"data":       readers,
 	})
 }
 
@@ -103,14 +110,16 @@ func (c *ReaderController) DeleteReader(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Err,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
 	})
 }
 

@@ -2,7 +2,9 @@ package controller
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
+
 	"library_server/model"
 	"library_server/response"
 	"library_server/service"
@@ -26,15 +28,17 @@ func (r *ReportController) GetReportRecords(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "获取举报记录成功",
-		"data":   reports,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "获取举报记录成功",
+		"data":       reports,
 	})
 }
 
@@ -49,15 +53,17 @@ func (r *ReportController) GetAllReportRecords(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "获取举报记录成功",
-		"data":   reportVos,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "获取举报记录成功",
+		"data":       reportVos,
 	})
 }
 
@@ -76,14 +82,16 @@ func (r *ReportController) CreateReport(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "获取举报记录成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "获取举报记录成功",
 	})
 }
 
@@ -119,15 +127,17 @@ func (r *ReportController) ManageReport(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
 	})
 }
 

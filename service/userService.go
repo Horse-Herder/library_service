@@ -2,13 +2,15 @@ package service
 
 import (
 	"errors"
+	"net/http"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 	"library_server/repository"
 	"library_server/utils"
-	"net/http"
 )
 
 type UserService struct {
@@ -26,7 +28,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	length := len([]rune(reader.ReaderName))
 	if length == 0 || length > 10 {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "数据验证错误",
 			Err:      errors.New("请输入正确的用户名"),
 		}
@@ -35,7 +37,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	length = len([]rune(reader.Password))
 	if length < 4 || length > 20 {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "数据验证错误",
 			Err:      errors.New("请输入正确的密码"),
 		}
@@ -43,7 +45,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	// 邮箱
 	if err := utils.EmailRegexp(reader.Email); err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "数据验证错误",
 			Err:      err,
 		}
@@ -51,7 +53,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	// 手机号
 	if err := utils.PhoneRegexp(reader.Phone); err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "数据验证错误",
 			Err:      err,
 		}
@@ -63,7 +65,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	// 手机号已使用
 	if readerByPhone.ReaderId != "" {
 		return &common.LError{
-			HttpCode: http.StatusConflict,
+			HttpCode: http.StatusOK,
 			Msg:      "手机号已使用",
 			Err:      errors.New("手机号已使用"),
 		}
@@ -71,7 +73,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	encryptPassword, err := bcrypt.GenerateFromPassword([]byte(reader.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "注册失败",
 			Err:      err,
 		}
@@ -83,7 +85,7 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 	if err != nil {
 		tx.Rollback() // 如果操作出错，则回滚事务
 		return &common.LError{
-			HttpCode: http.StatusInternalServerError,
+			HttpCode: http.StatusOK,
 			Msg:      "注册失败",
 			Err:      err,
 		}
@@ -101,7 +103,7 @@ func (u *UserService) LoginAsAdmin(admin model.Admin) (lErr *common.LError) {
 	// 数据验证
 	if len([]rune(admin.Phone)) < 1 || len([]rune(admin.Phone)) > 20 {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "请输入正确的用户名",
 			Err:      errors.New("请输入正确的用户名"),
 		}
@@ -113,7 +115,7 @@ func (u *UserService) LoginAsAdmin(admin model.Admin) (lErr *common.LError) {
 	// 验证密码
 	if !exist {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "请输入正确的管理员账号",
 			Err:      errors.New("请输入正确的管理员账号"),
 		}
@@ -121,7 +123,7 @@ func (u *UserService) LoginAsAdmin(admin model.Admin) (lErr *common.LError) {
 	// 密码校验失败
 	if loginAdmin.Password != admin.Password {
 		return &common.LError{
-			HttpCode: http.StatusBadRequest,
+			HttpCode: http.StatusOK,
 			Msg:      "请输入正确的密码",
 			Err:      errors.New("请输入正确的密码"),
 		}

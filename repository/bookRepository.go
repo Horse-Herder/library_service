@@ -2,6 +2,7 @@ package repository
 
 import (
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 )
@@ -210,6 +211,7 @@ func (b *BookRepository) CreateBook(tx *gorm.DB, book model.Book) error {
 	if err := tx.Create(&book).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 

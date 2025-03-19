@@ -50,15 +50,17 @@ func (r *ReserveController) CreateReserveRecord(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "预约成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "预约成功",
 	})
 }
 
@@ -82,16 +84,18 @@ func (r *ReserveController) GetReserveRecords(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "读者请求预约记录成功",
-		"data":   reserveVOs,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "读者请求预约记录成功",
+		"data":       reserveVOs,
 	})
 
 }
@@ -124,15 +128,17 @@ func (r *ReserveController) DeleteReserveRecord(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "取消预约成功!",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "取消预约成功!",
 	})
 }
 
@@ -146,16 +152,18 @@ func (r *ReserveController) GetAllReserveRecords(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "取消预约成功!",
-		"data":   reserveVos,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "取消预约成功!",
+		"data":       reserveVos,
 	})
 }
 func NewReserveController() ReserveController {

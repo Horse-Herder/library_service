@@ -28,14 +28,16 @@ func (b *BorrowController) CreateBorrowRecord(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "新增借阅记录",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "新增借阅记录",
 	})
 }
 
@@ -51,15 +53,17 @@ func (b *BorrowController) GetReaderBorrowRecords(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "获取借阅记录成功",
-		"data":   borrowVos,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "获取借阅记录成功",
+		"data":       borrowVos,
 	})
 }
 
@@ -79,15 +83,17 @@ func (b *BorrowController) ReturnBook(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "归还书籍成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "归还书籍成功",
 	})
 
 }
@@ -106,14 +112,16 @@ func (b *BorrowController) RenewBook(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "续借图书成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "续借图书成功",
 	})
 }
 
@@ -128,15 +136,17 @@ func (b *BorrowController) GetAllBorrowRecords(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "获取借阅记录成功",
-		"data":   borrowVos,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "获取借阅记录成功",
+		"data":       borrowVos,
 	})
 }
 
@@ -152,15 +162,17 @@ func (b *BorrowController) GetBorrowRecordByInfo(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "获取借阅记录成功",
-		"data":   borrowVos,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "获取借阅记录成功",
+		"data":       borrowVos,
 	})
 }
 
@@ -179,14 +191,16 @@ func (b *BorrowController) DeleteBorrow(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
 	})
 }
 
@@ -203,14 +217,16 @@ func (b *BorrowController) SendReminder(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "请求成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "请求成功",
 	})
 }
 

@@ -26,8 +26,9 @@ func (b *BookController) GetBooks(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
@@ -55,15 +56,17 @@ func (b *BookController) GetBooksByName(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "查询成功",
-		"data":   books,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "查询成功",
+		"data":       books,
 	})
 }
 
@@ -82,14 +85,16 @@ func (b *BookController) UpdateBookInfo(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "更新书籍成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "更新书籍成功",
 	})
 }
 
@@ -106,14 +111,16 @@ func (b *BookController) DeleteBook(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "删除书籍成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "删除书籍成功",
 	})
 }
 
@@ -149,14 +156,16 @@ func (b *BookController) CreateBook(ctx *gin.Context) {
 	if lErr != nil {
 		fmt.Println(lErr.Err)
 		response.Response(ctx, lErr.HttpCode, gin.H{
-			"status": lErr.HttpCode,
-			"msg":    lErr.Msg,
+			"status":     lErr.HttpCode,
+			"error_code": lErr.ErrorCode,
+			"msg":        lErr.Msg,
 		})
 		return
 	}
 	response.Success(ctx, gin.H{
-		"status": 200,
-		"msg":    "添加图书成功",
+		"status":     200,
+		"error_code": 1,
+		"msg":        "添加图书成功",
 	})
 }
 
