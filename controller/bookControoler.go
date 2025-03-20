@@ -23,7 +23,10 @@ type BookController struct {
 func (b *BookController) GetBooks(ctx *gin.Context) {
 	bookService := service.NewBookService()
 	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
-	books, lErr := bookService.GetBooks(isAdmin)
+	page := cast.ToInt(ctx.PostForm("page"))
+	pageSize := cast.ToInt(ctx.PostForm("pageSize"))
+	fmt.Println("------------", page, pageSize)
+	books, total, lErr := bookService.GetBooks(isAdmin, page, pageSize)
 	// 查询错误
 	if lErr != nil {
 		fmt.Println(lErr.Err)
@@ -38,6 +41,7 @@ func (b *BookController) GetBooks(ctx *gin.Context) {
 		"status": 200,
 		"msg":    "书籍请求成功",
 		"data":   books,
+		"total":  total,
 	})
 }
 
@@ -48,10 +52,12 @@ func (b *BookController) GetBooks(ctx *gin.Context) {
 func (b *BookController) GetBooksByName(ctx *gin.Context) {
 	bookService := service.NewBookService()
 	name := ctx.PostForm("name")
+	page := cast.ToInt(ctx.PostForm("page"))
+	pageSize := cast.ToInt(ctx.PostForm("pageSize"))
 	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
 	// name为空，跳转到QueryBooks
 	if name == "" {
-		books, lErr := bookService.GetBooks(isAdmin)
+		books, total, lErr := bookService.GetBooks(isAdmin, page, pageSize)
 		if lErr != nil {
 			fmt.Println(lErr.Err)
 			response.Response(ctx, lErr.HttpCode, gin.H{
@@ -65,11 +71,12 @@ func (b *BookController) GetBooksByName(ctx *gin.Context) {
 			"status": 200,
 			"msg":    "书籍请求成功",
 			"data":   books,
+			"total":  total,
 		})
 		return
 	}
 
-	books, lErr := bookService.GetBookByName(name, isAdmin)
+	books, totl, lErr := bookService.GetBookByName(name, isAdmin, page, pageSize)
 	// 查询出错
 	if lErr != nil {
 		fmt.Println(lErr.Err)
@@ -85,6 +92,7 @@ func (b *BookController) GetBooksByName(ctx *gin.Context) {
 		"error_code": 1,
 		"msg":        "查询成功",
 		"data":       books,
+		"total":      totl,
 	})
 }
 

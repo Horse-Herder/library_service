@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 
 	"library_server/common"
@@ -15,35 +13,55 @@ type BookRepository struct {
 
 // GetBooks
 // @Description 查询所有书籍
-func (b *BookRepository) GetBooks(isAdmin bool) (books []model.Book, err error) {
-	fmt.Println("----------isAdmin", isAdmin)
-	if isAdmin {
-		if err := b.DB.Find(&books).Error; err != nil {
-			return books, err
-		}
-	} else {
-		if err := b.DB.Where("status = ?", 1).Find(&books).Error; err != nil {
-			return books, err
-		}
+func (b *BookRepository) GetBooks(isAdmin bool, page int, pageSize int) (books []model.Book, total int64, err error) {
+	// Build the base query
+	query := b.DB.Model(&model.Book{})
+
+	if !isAdmin {
+		query = query.Where("status = ?", 1)
 	}
 
-	//fmt.Println(books)
-	return books, nil
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+
+	if err := query.Offset(offset).Limit(pageSize).Find(&books).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return books, total, nil
+
 }
 
 // GetBooksByName
 // @Description 根据书名查询书籍
-func (b *BookRepository) GetBooksByName(bookName string, isAdmin bool) (books []model.Book, err error) {
-	if isAdmin {
-		if err := b.DB.Where("book_name like ?", "%"+bookName+"%").Find(&books).Error; err != nil {
-			return books, err
-		}
-	} else {
-		if err := b.DB.Where("book_name like ?", "%"+bookName+"%", "status = ?", 1).Find(&books).Error; err != nil {
-			return books, err
-		}
+func (b *BookRepository) GetBooksByName(searchName string, isAdmin bool, page int, pageSize int) (books []model.Book, total int64, err error) {
+	query := b.DB.Model(&model.Book{})
+
+	// 模糊搜索书名或作者
+	if searchName != "" {
+		query = query.Where("book_name LIKE ? OR author LIKE ?", "%"+searchName+"%", "%"+searchName+"%")
 	}
-	return books, nil
+
+	// 如果不是管理员，则只显示 status = 1 的书籍
+	if !isAdmin {
+		query = query.Where("status = ?", 1)
+	}
+
+	// 统计总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// 分页查询
+	offset := (page - 1) * pageSize
+	if err := query.Offset(offset).Limit(pageSize).Find(&books).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return books, total, nil
 }
 
 // UpdateBookAmount
