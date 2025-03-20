@@ -23,9 +23,6 @@ type BookController struct {
 func (b *BookController) GetBooks(ctx *gin.Context) {
 	bookService := service.NewBookService()
 	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
-
-	fmt.Println("-------------", ctx.PostForm("isAdmin"))
-	fmt.Println("isAdmin:", cast.ToBool(ctx.PostForm("isAdmin")))
 	books, lErr := bookService.GetBooks(isAdmin)
 	// 查询错误
 	if lErr != nil {
