@@ -1,14 +1,14 @@
 # server
 server:
-  port: 8080
+  port: 9090
 
 # mysql
 datasource:
-  username: xxxxx
-  password:  xxxxx
+  username: root
+  password:  fhw8612.
   host: 127.0.0.1
   port: 3306
-  database: xxxxx
+  database: library_1
   charset: utf8mb4
   parseTime: true
   loc: Asia/Shanghai

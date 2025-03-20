@@ -97,6 +97,8 @@ func (u *UserController) loginAsAdmin(ctx *gin.Context) {
 		return
 	}
 
+	ctx.Set("isAdmin", "1")
+
 	response.Success(ctx, gin.H{
 		"msg":        "管理员登录成功",
 		"status":     200,
@@ -142,6 +144,8 @@ func (u *UserController) loginAsReader(ctx *gin.Context) {
 		})
 		return
 	}
+	ctx.Set("isAdmin", "0")
+
 	response.Success(ctx, gin.H{
 		"msg":         "读者登录成功",
 		"status":      200,

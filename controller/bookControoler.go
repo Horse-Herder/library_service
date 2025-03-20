@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 
 	"library_server/model"
 	"library_server/response"
@@ -21,7 +22,11 @@ type BookController struct {
 // @Param ctx
 func (b *BookController) GetBooks(ctx *gin.Context) {
 	bookService := service.NewBookService()
-	books, lErr := bookService.GetBooks()
+	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
+
+	fmt.Println("-------------", ctx.PostForm("isAdmin"))
+	fmt.Println("isAdmin:", cast.ToBool(ctx.PostForm("isAdmin")))
+	books, lErr := bookService.GetBooks(isAdmin)
 	// 查询错误
 	if lErr != nil {
 		fmt.Println(lErr.Err)
@@ -46,12 +51,28 @@ func (b *BookController) GetBooks(ctx *gin.Context) {
 func (b *BookController) GetBooksByName(ctx *gin.Context) {
 	bookService := service.NewBookService()
 	name := ctx.PostForm("name")
+	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
 	// name为空，跳转到QueryBooks
 	if name == "" {
-		ctx.Redirect(http.StatusFound, "/books")
-		ctx.Abort()
+		books, lErr := bookService.GetBooks(isAdmin)
+		if lErr != nil {
+			fmt.Println(lErr.Err)
+			response.Response(ctx, lErr.HttpCode, gin.H{
+				"status":     lErr.HttpCode,
+				"error_code": lErr.ErrorCode,
+				"msg":        lErr.Msg,
+			})
+			return
+		}
+		response.Response(ctx, http.StatusOK, gin.H{
+			"status": 200,
+			"msg":    "书籍请求成功",
+			"data":   books,
+		})
+		return
 	}
-	books, lErr := bookService.GetBookByName(name)
+
+	books, lErr := bookService.GetBookByName(name, isAdmin)
 	// 查询出错
 	if lErr != nil {
 		fmt.Println(lErr.Err)
@@ -131,8 +152,10 @@ func (b *BookController) DeleteBook(ctx *gin.Context) {
 func (b *BookController) CreateBook(ctx *gin.Context) {
 	bookName := ctx.PostForm("bookName")
 	author := ctx.PostForm("author")
+	press := ctx.PostForm("press")
 	amount := ctx.PostForm("amount")
 	position := ctx.PostForm("position")
+	Isbn := ctx.PostForm("isbn")
 
 	Amount, err := strconv.Atoi(amount)
 	if err != nil {
@@ -145,6 +168,8 @@ func (b *BookController) CreateBook(ctx *gin.Context) {
 	}
 	book := model.Book{
 		BookName: bookName,
+		Press:    press,
+		Isbn:     Isbn,
 		Amount:   uint(Amount),
 		Author:   author,
 		Position: position,

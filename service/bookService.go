@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/spf13/cast"
 	"gorm.io/gorm"
 
 	"library_server/common"
 	"library_server/model"
 	"library_server/repository"
+	"library_server/utils"
 )
 
 type BookService struct {
@@ -21,9 +23,9 @@ type BookService struct {
 // @Author John 2023-04-20 20:51:45
 // @Return []model.Book
 // @Return *common.LError
-func (b *BookService) GetBooks() (books []model.Book, lErr *common.LError) {
+func (b *BookService) GetBooks(isAdmin bool) (books []model.Book, lErr *common.LError) {
 	bookRepository := repository.NewBookRepository()
-	books, err := bookRepository.GetBooks()
+	books, err := bookRepository.GetBooks(isAdmin)
 	if err != nil {
 		return books, &common.LError{
 			HttpCode: http.StatusOK,
@@ -45,9 +47,9 @@ func (b *BookService) GetBooks() (books []model.Book, lErr *common.LError) {
 // GetBookByName
 // @Description 查询书籍
 // @Author John 2023-04-20 20:51:57
-func (b *BookService) GetBookByName(bookName string) (books []model.Book, lErr *common.LError) {
+func (b *BookService) GetBookByName(bookName string, isAdmin bool) (books []model.Book, lErr *common.LError) {
 	var bookRepository = repository.NewBookRepository()
-	books, err := bookRepository.GetBooksByName(bookName)
+	books, err := bookRepository.GetBooksByName(bookName, isAdmin)
 	// 查询出错
 	if err != nil {
 		return books, &common.LError{
@@ -161,6 +163,37 @@ func (b *BookService) UpdateBookInfo(bookId string, value string, status string,
 				}
 			}
 		}
+	case "5":
+		err := bookRepository.UpdatePressByBookId(tx, bookId, value)
+		if err != nil {
+			tx.Rollback()
+			return &common.LError{
+				HttpCode: http.StatusOK,
+				Msg:      "更新图书信息失败",
+				Err:      errors.New("更新图书名称失败"),
+			}
+		}
+	case "6":
+		err := bookRepository.UpdateISBNByBookId(tx, bookId, value)
+		if err != nil {
+			tx.Rollback()
+			return &common.LError{
+				HttpCode: http.StatusOK,
+				Msg:      "更新图书信息失败",
+				Err:      errors.New("更新图书名称失败"),
+			}
+		}
+	case "7":
+		err := bookRepository.UpdateStatusByBookId(tx, bookId, cast.ToInt64(value))
+		if err != nil {
+			tx.Rollback()
+			return &common.LError{
+				HttpCode: http.StatusOK,
+				Msg:      "更新图书信息失败",
+				Err:      errors.New("更新图书名称失败"),
+			}
+		}
+
 	}
 	tx.Commit()
 	return nil
@@ -290,7 +323,7 @@ func (b *BookService) CreateBook(book model.Book) (lErr *common.LError) {
 	tx := b.DB.Begin()
 	book.Status = 1
 	book.TotalAmount = book.Amount
-
+	book.BookId = utils.GetSnowFlakeId()
 	// 新增书籍
 	err = bookRepository.CreateBook(tx, book)
 	if err != nil {
