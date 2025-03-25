@@ -1,10 +1,13 @@
 package repository
 
 import (
+	"log"
+
 	"gorm.io/gorm"
 
 	"library_server/common"
 	"library_server/model"
+	"library_server/vo/dto"
 )
 
 type BookRepository struct {
@@ -13,18 +16,45 @@ type BookRepository struct {
 
 // GetBooks
 // @Description 查询所有书籍
-func (b *BookRepository) GetBooks(isAdmin bool) (books []model.Book, err error) {
-	if isAdmin {
-		if err := b.DB.Where("is_deleted = ?", 0).Find(&books).Error; err != nil {
-			return books, err
-		}
-	} else {
-		if err := b.DB.Where("status = ?", 1, "is_deleted = ?", 0).Find(&books).Error; err != nil {
-			return books, err
+func (b *BookRepository) GetBooks(isAdmin bool, req *dto.BookListRequest) (books []model.Book, total int64, err error) {
+
+	if req == nil {
+		req.PageQuery = &dto.PageQuery{
+			Page:  1,
+			Limit: 10,
 		}
 	}
+	name := req.Name
+	// 计算偏移量
+	offset := (req.PageQuery.Page - 1) * req.PageQuery.Limit
 
-	return books, nil
+	// 构建基础查询
+	query := b.DB.Model(&books)
+	query = query.Where("is_deleted = ?", 0)
+
+	// 根据 isAdmin 条件添加查询条件
+	if !isAdmin {
+		query = query.Where("status = ? ", 1)
+	}
+
+	if req.Name != "" {
+		query = query.Where("book_name LIKE ? OR author LIKE ?", "%"+name+"%", "%"+name+"%")
+	}
+	
+	// 查询总数
+	if err = query.Count(&total).Error; err != nil {
+		log.Printf("Failed to count books: %v", err)
+		return nil, 0, err
+	}
+
+	// 应用分页并查询数据
+	result := query.Offset(offset).Limit(req.Limit).Find(&books)
+	if result.Error != nil {
+		log.Printf("Failed to query books: %v", result.Error)
+		return nil, 0, result.Error
+	}
+
+	return books, total, nil
 }
 
 // GetBooksByName

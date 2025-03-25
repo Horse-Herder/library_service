@@ -12,6 +12,7 @@ import (
 	"library_server/model"
 	"library_server/repository"
 	"library_server/utils"
+	"library_server/vo/dto"
 )
 
 type BookService struct {
@@ -23,11 +24,11 @@ type BookService struct {
 // @Author John 2023-04-20 20:51:45
 // @Return []model.Book
 // @Return *common.LError
-func (b *BookService) GetBooks(isAdmin bool) (books []model.Book, lErr *common.LError) {
+func (b *BookService) GetBooks(isAdmin bool, req *dto.BookListRequest) (books []model.Book, total int64, lErr *common.LError) {
 	bookRepository := repository.NewBookRepository()
-	books, err := bookRepository.GetBooks(isAdmin)
+	books, total, err := bookRepository.GetBooks(isAdmin, req)
 	if err != nil {
-		return books, &common.LError{
+		return books, total, &common.LError{
 			HttpCode: http.StatusOK,
 			Msg:      "书籍查询失败",
 			Err:      err,
@@ -35,13 +36,13 @@ func (b *BookService) GetBooks(isAdmin bool) (books []model.Book, lErr *common.L
 	}
 	// 请求书籍数据为空
 	if len(books) == 0 {
-		return books, &common.LError{
+		return books, total, &common.LError{
 			HttpCode: http.StatusOK,
 			Msg:      "请求书籍数据为空",
 			Err:      errors.New("请求书籍数据为空"),
 		}
 	}
-	return books, nil
+	return books, total, nil
 }
 
 // GetBookByName

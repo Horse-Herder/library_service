@@ -34,7 +34,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	// book
 	bookController := controller.NewBookController()
 	base.POST("/books", bookController.GetBooks)
-	base.POST("/searchbook", bookController.GetBooksByName)
+	//base.POST("/searchbook", bookController.GetBooksByName)
 	base.POST("/changebookinfo", bookController.UpdateBookInfo)
 	base.POST("/delbook", bookController.DeleteBook)
 	base.POST("/adminaddbooks", bookController.CreateBook)
