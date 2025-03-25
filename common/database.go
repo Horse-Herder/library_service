@@ -2,11 +2,13 @@ package common
 
 import (
 	"fmt"
+	"net/url"
+
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
 	"library_server/model"
-	"net/url"
 )
 
 func InitDB() {
@@ -42,4 +44,20 @@ var DB *gorm.DB
 
 func GetDB() *gorm.DB {
 	return DB
+}
+
+func GetRedis() RedisClient {
+
+	redis, err := NewRedis(&RedisConfig{
+		Switch:         true,
+		ConnectionMode: viper.GetInt("redis.connection_mode"),
+		Address:        viper.GetStringSlice("redis.addr"),
+		Password:       viper.GetString("redis.password"),
+		DB:             viper.GetInt("redis.db"),
+	})
+	if err != nil {
+		panic(fmt.Sprintf("fail to init redis: %s\n", err))
+
+	}
+	return redis
 }

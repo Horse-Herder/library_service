@@ -99,10 +99,11 @@ func (u *UserService) Register(reader model.Reader) (lErr *common.LError) {
 // @Author John 2023-05-05 15:17:06
 // @Param admin
 // @Return lErr
-func (u *UserService) LoginAsAdmin(admin model.Admin) (lErr *common.LError) {
+func (u *UserService) LoginAsAdmin(admin model.Admin) (adminModel *model.Admin, lErr *common.LError) {
 	// 数据验证
+	var loginAdmin *model.Admin
 	if len([]rune(admin.Phone)) < 1 || len([]rune(admin.Phone)) > 20 {
-		return &common.LError{
+		return loginAdmin, &common.LError{
 			HttpCode: http.StatusOK,
 			Msg:      "请输入正确的用户名",
 			Err:      errors.New("请输入正确的用户名"),
@@ -114,7 +115,7 @@ func (u *UserService) LoginAsAdmin(admin model.Admin) (lErr *common.LError) {
 
 	// 验证密码
 	if !exist {
-		return &common.LError{
+		return loginAdmin, &common.LError{
 			HttpCode: http.StatusOK,
 			Msg:      "请输入正确的管理员账号",
 			Err:      errors.New("请输入正确的管理员账号"),
@@ -122,13 +123,13 @@ func (u *UserService) LoginAsAdmin(admin model.Admin) (lErr *common.LError) {
 	}
 	// 密码校验失败
 	if loginAdmin.Password != admin.Password {
-		return &common.LError{
+		return loginAdmin, &common.LError{
 			HttpCode: http.StatusOK,
 			Msg:      "请输入正确的密码",
 			Err:      errors.New("请输入正确的密码"),
 		}
 	}
-	return nil
+	return loginAdmin, nil
 }
 func NewUserService() UserService {
 	return UserService{

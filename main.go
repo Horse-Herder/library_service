@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 
+	"library_server/auth"
 	"library_server/common"
 	"library_server/router"
 )
@@ -22,6 +23,8 @@ func main() {
 			sqlDB.Close()
 		}
 	}()
+
+	auth.Init()
 
 	// 路由收集
 	r = router.CollectRoute(r)

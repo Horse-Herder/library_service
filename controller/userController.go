@@ -3,11 +3,17 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
+
+	//"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
+	"library_server/auth"
+	"library_server/auth/jwt"
 	"library_server/common"
 	"library_server/model"
 	"library_server/response"
@@ -16,7 +22,8 @@ import (
 )
 
 type UserController struct {
-	DB *gorm.DB
+	DB    *gorm.DB
+	Redis common.RedisClient
 }
 
 // Register
@@ -85,7 +92,7 @@ func (u *UserController) loginAsAdmin(ctx *gin.Context) {
 		Password: password,
 	}
 	userService := service.NewUserService()
-	lErr := userService.LoginAsAdmin(admin)
+	loginAdmin, lErr := userService.LoginAsAdmin(admin)
 
 	if lErr != nil {
 		fmt.Println(lErr.Err)
@@ -99,12 +106,32 @@ func (u *UserController) loginAsAdmin(ctx *gin.Context) {
 
 	ctx.Set("isAdmin", "1")
 
+	claimsElement := &jwt.ClaimsElement{
+		UserId:   cast.ToString(loginAdmin.Id),
+		UserName: cast.ToString(loginAdmin.Phone),
+		IsAdmin:  true,
+	}
+
+	token, err := auth.Jwt.Generate(claimsElement, map[string]interface{}{}, 8640)
+	if err != nil {
+		response.Response(ctx, http.StatusOK, gin.H{
+			"status":     http.StatusOK,
+			"error_code": 0,
+			"msg":        err.Error(),
+		})
+		return
+	}
+
+	cacheKey := fmt.Sprintf("loginAsAdmin_isAdmin%v_token:%s", true, phone)
+	u.Redis.Set(ctx, cacheKey, token.AccessToken, 1*time.Hour)
+
 	response.Success(ctx, gin.H{
 		"msg":        "管理员登录成功",
 		"status":     200,
 		"error_code": 1,
 		"userName":   phone,
 		"isAdmin":    true,
+		"token":      token.AccessToken,
 	})
 }
 
@@ -144,7 +171,25 @@ func (u *UserController) loginAsReader(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.Set("isAdmin", "0")
+
+	claimsElement := &jwt.ClaimsElement{
+		UserId:   cast.ToString(loginReader.ReaderId),
+		UserName: cast.ToString(loginReader.Phone),
+		IsAdmin:  false,
+	}
+	token, err := auth.Jwt.Generate(claimsElement, map[string]interface{}{"isAdmin": false}, 8640)
+
+	if err != nil {
+		response.Response(ctx, http.StatusOK, gin.H{
+			"status":     http.StatusOK,
+			"error_code": 0,
+			"msg":        err.Error(),
+		})
+		return
+	}
+
+	cacheKey := fmt.Sprintf("loginAsReader_isAdmin:%v_token:%s", false, loginReader.Phone)
+	u.Redis.Set(ctx, cacheKey, token.AccessToken, 1*time.Hour)
 
 	response.Success(ctx, gin.H{
 		"msg":         "读者登录成功",
@@ -152,13 +197,29 @@ func (u *UserController) loginAsReader(ctx *gin.Context) {
 		"readerId":    loginReader.ReaderId,
 		"readerName":  loginReader.ReaderName,
 		"readerPhone": loginReader.Phone,
+		"userName":    loginReader.Phone,
 		"borrowTimes": loginReader.BorrowTimes,
 		"ovdTimes":    loginReader.OvdTimes,
 		"email":       loginReader.Email,
 		"isAdmin":     false,
+		"token":       token.AccessToken,
 		"error_code":  1,
 	})
 
+}
+
+func (u *UserController) Logout(ctx *gin.Context) {
+	phone := ctx.PostForm("phone")
+	isAdmin := ctx.PostForm("admin")
+
+	cacheKey := fmt.Sprintf("loginAsReader_isAdmin:%v_token:%s", isAdmin, phone)
+	u.Redis.Del(ctx, cacheKey)
+
+	response.Success(ctx, gin.H{
+		"status":     200,
+		"error_code": 1,
+		"msg":        "退出登录成功!",
+	})
 }
 
 func getReader(db *gorm.DB, phone string) (model.Reader, bool) {
@@ -172,5 +233,5 @@ func getReader(db *gorm.DB, phone string) (model.Reader, bool) {
 // @Author John 2023-04-16 15:22:31
 // @Return UserController
 func NewUserController() UserController {
-	return UserController{DB: common.GetDB()}
+	return UserController{DB: common.GetDB(), Redis: common.GetRedis()}
 }

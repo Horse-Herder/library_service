@@ -22,7 +22,7 @@ type BookController struct {
 // @Param ctx
 func (b *BookController) GetBooks(ctx *gin.Context) {
 	bookService := service.NewBookService()
-	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
+	isAdmin := ctx.GetBool("isAdmin")
 	books, lErr := bookService.GetBooks(isAdmin)
 	// 查询错误
 	if lErr != nil {
@@ -35,9 +35,10 @@ func (b *BookController) GetBooks(ctx *gin.Context) {
 		return
 	}
 	response.Response(ctx, http.StatusOK, gin.H{
-		"status": 200,
-		"msg":    "书籍请求成功",
-		"data":   books,
+		"status":     200,
+		"error_code": 1,
+		"msg":        "书籍请求成功",
+		"data":       books,
 	})
 }
 
@@ -50,6 +51,10 @@ func (b *BookController) GetBooksByName(ctx *gin.Context) {
 	name := ctx.PostForm("name")
 	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
 	// name为空，跳转到QueryBooks
+
+	fmt.Println("-----2-----------", ctx.GetString("username"))
+	fmt.Println("-----2-----------", ctx.GetString("isAdmin"))
+
 	if name == "" {
 		books, lErr := bookService.GetBooks(isAdmin)
 		if lErr != nil {
@@ -62,9 +67,10 @@ func (b *BookController) GetBooksByName(ctx *gin.Context) {
 			return
 		}
 		response.Response(ctx, http.StatusOK, gin.H{
-			"status": 200,
-			"msg":    "书籍请求成功",
-			"data":   books,
+			"status":     200,
+			"msg":        "书籍请求成功",
+			"error_code": 1,
+			"data":       books,
 		})
 		return
 	}

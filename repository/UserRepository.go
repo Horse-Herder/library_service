@@ -2,6 +2,7 @@ package repository
 
 import (
 	"gorm.io/gorm"
+
 	"library_server/common"
 	"library_server/model"
 )
@@ -42,7 +43,7 @@ func (r *UserRepository) CreateReader(tx *gorm.DB, reader model.Reader) error {
 // @Param phone
 // @Return model.Admin
 // @Return bool
-func (r *UserRepository) GetAdminByPhone(phone string) (admin model.Admin, exist bool) {
+func (r *UserRepository) GetAdminByPhone(phone string) (admin *model.Admin, exist bool) {
 	r.DB.Where("phone = ?", phone).First(&admin)
 	return admin, admin.Id != 0
 }

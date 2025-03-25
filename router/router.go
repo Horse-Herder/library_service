@@ -1,67 +1,82 @@
 package router
 
 import (
+	"net/http"
+	"os"
+
 	"github.com/gin-gonic/gin"
+
 	"library_server/controller"
 	"library_server/middleware"
 )
 
+type RATPConsoleServer struct {
+	engine *gin.Engine
+	server *http.Server
+
+	forever chan os.Signal
+}
+
 func CollectRoute(r *gin.Engine) *gin.Engine {
 	// 配置CORS跨域路由
 	CORSMiddleware := middleware.CORSMiddleware()
+	base := r.Group("/")
+
 	r.Use(CORSMiddleware)
 
-	// user
 	userController := controller.NewUserController()
 	r.POST("/login", userController.Login)
 	r.POST("/register", userController.Register)
+	r.POST("/logout", userController.Logout)
+
+	base.Use(JWT())
 
 	// book
 	bookController := controller.NewBookController()
-	r.POST("/books", bookController.GetBooks)
-	r.POST("/searchbook", bookController.GetBooksByName)
-	r.POST("/changebookinfo", bookController.UpdateBookInfo)
-	r.POST("/delbook", bookController.DeleteBook)
-	r.POST("/adminaddbooks", bookController.CreateBook)
+	base.POST("/books", bookController.GetBooks)
+	base.POST("/searchbook", bookController.GetBooksByName)
+	base.POST("/changebookinfo", bookController.UpdateBookInfo)
+	base.POST("/delbook", bookController.DeleteBook)
+	base.POST("/adminaddbooks", bookController.CreateBook)
 
 	// comment
 	commentController := controller.NewCommentController()
-	r.POST("/comments", commentController.GetComments)
-	r.POST("/amount", commentController.GetCommentCount)
-	r.POST("/addcomment", commentController.CreateComment)
-	r.POST("/addpraise", commentController.UpdatePraise)
+	base.POST("/comments", commentController.GetComments)
+	base.POST("/amount", commentController.GetCommentCount)
+	base.POST("/addcomment", commentController.CreateComment)
+	base.POST("/addpraise", commentController.UpdatePraise)
 
 	// reader
 	readerController := controller.NewReaderController()
-	r.POST("/initreader", readerController.GetReaderInfo)
-	r.POST("/amountmax", readerController.GetMaxCountReader)
-	r.POST("/delperson", readerController.DeleteReader)
-	r.POST("/initreaderlist", readerController.GetReaders)
+	base.POST("/initreader", readerController.GetReaderInfo)
+	base.POST("/amountmax", readerController.GetMaxCountReader)
+	base.POST("/delperson", readerController.DeleteReader)
+	base.POST("/initreaderlist", readerController.GetReaders)
 
 	// borrow
 	borrowController := controller.NewBorrowController()
-	r.POST("/addborrow", borrowController.CreateBorrowRecord)
-	r.POST("/borrows", borrowController.GetReaderBorrowRecords)
-	r.POST("/returnbook", borrowController.ReturnBook)
-	r.POST("/continueborrow", borrowController.RenewBook)
-	r.POST("/borrowslist", borrowController.GetAllBorrowRecords)
-	r.POST("/searchborrow", borrowController.GetBorrowRecordByInfo)
-	r.POST("/deleteborrow", borrowController.DeleteBorrow)
-	r.POST("/alertperson", borrowController.SendReminder)
+	base.POST("/addborrow", borrowController.CreateBorrowRecord)
+	base.POST("/borrows", borrowController.GetReaderBorrowRecords)
+	base.POST("/returnbook", borrowController.ReturnBook)
+	base.POST("/continueborrow", borrowController.RenewBook)
+	base.POST("/borrowslist", borrowController.GetAllBorrowRecords)
+	base.POST("/searchborrow", borrowController.GetBorrowRecordByInfo)
+	base.POST("/deleteborrow", borrowController.DeleteBorrow)
+	base.POST("/alertperson", borrowController.SendReminder)
 
 	// reserve
 	reserveController := controller.NewReserveController()
-	r.POST("/addreserve", reserveController.CreateReserveRecord)
-	r.POST("/reserve", reserveController.GetReserveRecords)
-	r.POST("/cancelreserve", reserveController.DeleteReserveRecord)
-	r.POST("/reservelist", reserveController.GetAllReserveRecords)
+	base.POST("/addreserve", reserveController.CreateReserveRecord)
+	base.POST("/reserve", reserveController.GetReserveRecords)
+	base.POST("/cancelreserve", reserveController.DeleteReserveRecord)
+	base.POST("/reservelist", reserveController.GetAllReserveRecords)
 
 	// report
 	reportController := controller.NewReportController()
-	r.POST("/initstureport", reportController.GetReportRecords)
-	r.POST("/initreportlist", reportController.GetAllReportRecords)
-	r.POST("/reportcomment", reportController.CreateReport)
-	r.POST("/auditcomment", reportController.ManageReport)
+	base.POST("/initstureport", reportController.GetReportRecords)
+	base.POST("/initreportlist", reportController.GetAllReportRecords)
+	base.POST("/reportcomment", reportController.CreateReport)
+	base.POST("/auditcomment", reportController.ManageReport)
 
 	return r
 }

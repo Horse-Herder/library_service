@@ -1,6 +1,10 @@
 package utils
 
-import "reflect"
+import (
+	"crypto/md5"
+	"fmt"
+	"reflect"
+)
 
 // IsAnyParameterEmpty
 // @Description 判断是否存在参数为该类型零值
@@ -72,4 +76,9 @@ func IsZeroValue(i interface{}) bool {
 	default:
 		return reflect.DeepEqual(reflect.Zero(v.Type()).Interface(), i)
 	}
+}
+func Md5(str string) string {
+	m := md5.New()
+	m.Write([]byte(str))
+	return fmt.Sprintf("%x", m.Sum(nil))
 }
