@@ -16,4 +16,6 @@ type Book struct {
 	BorrowedTimes uint `json:"borrowedTimes"`
 	// 状态 1:可借阅 0：不可借阅
 	Status int `json:"status" gorm:"type:int(10);"`
+	// 是否删除 0:未删除 1:已删除
+	IsDeleted int `json:"is_deleted" gorm:"type:int(10);"`
 }

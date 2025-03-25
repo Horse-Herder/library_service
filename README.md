@@ -1,7 +1,7 @@
-# Go_lib
+# library_server
 
 ## 项目介绍
-Go_lib是一个用于管理图书馆等地的图书信息的应用程序，它可以帮助管理员更好地管理图书、借还书等功能。本图书管理系统采用了Go语言开发，主要用来练手，熟悉后端基本流程使用。
+library_server，它可以帮助管理员更好地管理图书、借还书等功能。本图书管理系统采用了Go语言开发，主要用来练手，熟悉后端基本流程使用。
 
 ## 初始化
 
@@ -9,24 +9,6 @@ Go_lib是一个用于管理图书馆等地的图书信息的应用程序，它�
 ```markdown
 go 1.20
 mysql 8.0.32
-```
-
-
-
-### 前端
-
-```markdown
-拉取代码 main分支
-
-git clone -b main https://library_server.git
-
-更新依赖
-
-npm install --dependencies
-
-启动前台
-
-yarn serve
 ```
 
 ### 后端

@@ -51,10 +51,6 @@ func (b *BookController) GetBooksByName(ctx *gin.Context) {
 	name := ctx.PostForm("name")
 	isAdmin := cast.ToBool(ctx.PostForm("isAdmin"))
 	// name为空，跳转到QueryBooks
-
-	fmt.Println("-----2-----------", ctx.GetString("username"))
-	fmt.Println("-----2-----------", ctx.GetString("isAdmin"))
-
 	if name == "" {
 		books, lErr := bookService.GetBooks(isAdmin)
 		if lErr != nil {

@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 
 	"library_server/common"
@@ -16,18 +14,16 @@ type BookRepository struct {
 // GetBooks
 // @Description 查询所有书籍
 func (b *BookRepository) GetBooks(isAdmin bool) (books []model.Book, err error) {
-	fmt.Println("----------isAdmin", isAdmin)
 	if isAdmin {
-		if err := b.DB.Find(&books).Error; err != nil {
+		if err := b.DB.Where("is_deleted = ?", 0).Find(&books).Error; err != nil {
 			return books, err
 		}
 	} else {
-		if err := b.DB.Where("status = ?", 1).Find(&books).Error; err != nil {
+		if err := b.DB.Where("status = ?", 1, "is_deleted = ?", 0).Find(&books).Error; err != nil {
 			return books, err
 		}
 	}
 
-	//fmt.Println(books)
 	return books, nil
 }
 
@@ -35,11 +31,11 @@ func (b *BookRepository) GetBooks(isAdmin bool) (books []model.Book, err error) 
 // @Description 根据书名查询书籍
 func (b *BookRepository) GetBooksByName(bookName string, isAdmin bool) (books []model.Book, err error) {
 	if isAdmin {
-		if err := b.DB.Where("book_name like ?", "%"+bookName+"%").Find(&books).Error; err != nil {
+		if err := b.DB.Where("book_name like ?", "%"+bookName+"%", "is_deleted = ?", 0).Find(&books).Error; err != nil {
 			return books, err
 		}
 	} else {
-		if err := b.DB.Where("book_name like ?", "%"+bookName+"%", "status = ?", 1).Find(&books).Error; err != nil {
+		if err := b.DB.Where("book_name like ?", "%"+bookName+"%", "status = ?", 1, "is_deleted = ?", 0).Find(&books).Error; err != nil {
 			return books, err
 		}
 	}
@@ -150,7 +146,10 @@ func (b *BookRepository) UpdateStatusByBookId(tx *gorm.DB, bookId string, status
 // DeleteBookByBookId
 // @Description 根据书籍id删除书籍
 func (b *BookRepository) DeleteBookByBookId(tx *gorm.DB, bookId string) error {
-	if err := tx.Where("book_id = ?", bookId).Delete(&model.Book{}).Error; err != nil {
+	// if err := tx.Where("book_id = ?", bookId).Delete(&model.Book{}).Error; err != nil {
+	// 	return err
+	// }
+	if err := tx.Model(&model.Book{}).Where("book_id = ?", bookId).UpdateColumn("is_deleted", 1).Error; err != nil {
 		return err
 	}
 	return nil
