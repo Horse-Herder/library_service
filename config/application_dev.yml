@@ -4,11 +4,11 @@ server:
 
 # mysql
 datasource:
-  username: root
-  password:  fhw8612.
-  host: 127.0.0.1
-  port: 3306
-  database: library_1
+  username: xxx
+  password:  xxx
+  host: xxxx
+  port: xxx
+  database: xxx
   charset: utf8mb4
   parseTime: true
   loc: Asia/Shanghai
@@ -18,7 +18,7 @@ datasource:
 # connection_mode 连接方式，0 为单机模式，1 为集群模式
 redis:
   connection_mode : 0
-  addr : ['127.0.0.1:6379']
+  addr : ['xxxxx']
   password : ''
   db : 0
 
@@ -33,5 +33,5 @@ email:
 # jwt
 jwt:
   expired_time: 86400
-  prefix: library_jwt
-  sign_key : library_jwt
+  prefix: xxxx
+  sign_key : xxx
