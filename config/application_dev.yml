@@ -4,11 +4,11 @@ server:
 
 # mysql
 datasource:
-  username: xxx
-  password:  xxx
+  username: xxxx
+  password:  xxxx
   host: xxxx
   port: xxx
-  database: xxx
+  database: xxxx
   charset: utf8mb4
   parseTime: true
   loc: Asia/Shanghai
@@ -18,7 +18,7 @@ datasource:
 # connection_mode 连接方式，0 为单机模式，1 为集群模式
 redis:
   connection_mode : 0
-  addr : ['xxxxx']
+  addr : ['xxxx:xxxx']
   password : ''
   db : 0
 
@@ -33,5 +33,5 @@ email:
 # jwt
 jwt:
   expired_time: 86400
-  prefix: xxxx
-  sign_key : xxx
+  prefix: library_jwt
+  sign_key : library_jwt

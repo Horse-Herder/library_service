@@ -10,5 +10,4 @@ __debug*
 go.work
 go.work.sum
 demo.go
-#config/application_dev.yml
-demo.go
+config/application.yml
